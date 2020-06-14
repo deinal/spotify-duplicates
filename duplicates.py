@@ -88,18 +88,18 @@ if __name__ == '__main__':
         
         if args.list:
             # List duplicates
-            print(f"\n{'Song':40s}{'playlist':40s}{'album':40s}{'artists':40s}position")
+            print(f"\n{'Song':35s}{'playlist':35s}{'album':35s}{'artists':35s}position")
             for name, dup in sorted(list_duplicates(names)):               
                 for n in dup:
-                    print(f"{name:40s}{music[n]['playlist']:40s}{music[n]['album']:40s}{music[n]['artists']:40s}{music[n]['position']}")
+                    print(f"{name[:33]:35s}{music[n]['playlist'][:33]:35s}{music[n]['album'][:33]:35s}{music[n]['artists'][:33]:35s}{music[n]['position']}")
         else:
             # List songs and take user input which to remove
             for name, dup in sorted(list_duplicates(names)):
                 print(f"\n--- song: {name} ---\n")
-                print(f"{'#':5s}{'playlist':40s}{'album':40s}{'artists':40s}position")
+                print(f"{'#':5s}{'playlist':35s}{'album':35s}{'artists':35s}position")
                 options = "Stop: q, Skip: 0, Remove from:"
                 for i, n in enumerate(dup):
-                    print(f"{str(i+1):5s}{music[n]['playlist']:40s}{music[n]['album']:40s}{music[n]['artists']:40s}{music[n]['position']}")
+                    print(f"{str(i+1):5s}{music[n]['playlist'][:33]:35s}{music[n]['album'][:33]:35s}{music[n]['artists'][:33]:35s}{music[n]['position']}")
                     options += f" {i+1} - {music[n]['playlist']},"
                 choice = input(f"\n{options.strip(',')}\n")
                 
