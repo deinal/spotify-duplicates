@@ -1,5 +1,6 @@
 import os
 import sys
+import argparse
 import spotipy
 import spotipy.util as util
 from collections import defaultdict
@@ -20,16 +21,22 @@ def list_duplicates(seq):
 
 if __name__ == '__main__':
     print('                       __  .__  _____                    .___           .__  .__               __                  ')
-    print('  ____________   _____/  |_|__|/ ____\__.__.           __| _/_ ________ |  | |__| ____ _____ _/  |_ ____   ______ ')
-    print(' /  ___/\____ \ /  _ \   __\  \   __|   |  |  ______  / __ |  |  \____ \|  | |  |/ ___\\__  \\    __|/ __ \ /  ___/')
-    print(' \___ \ |  |_| |  |_| )  | |  ||  |  \___  | /_____/ / /_/ |  |  /  |_| |  |_|  \  \___ / __ \|  | \  ___/ \___ \  ')
+    print('  ____________   _____/  |_|__|/ ____\__.__.           __| _/_ ________ |  | |__| ____ _____ _/  |__  ____   ______ ')
+    print(' /  ___/\____ \ /  _ \   __\  \   __|   |  |  ______  / __ |  |  \____ \|  | |  |/ ___\\\\__  \\\\    __|/ __ \ /  ___/')
+    print(' \___ \ |  |_| |  |_| )  | |  ||  |  \___  | /_____/ / /_/ |  |  /  |_| |  |_|  \  \___ / __ \|  | \   ___/ \___ \  ')
     print('/____  ||   __/ \____/|__| |__||__|  / ____|         \____ |____/|   __/|____/__|\___  |____  /__|  \___  \____  | ')
     print('     \/ |__|                         \/                   \/     |__|                \/     \/          \/     \/  ')
-    if len(sys.argv) > 1:
-        user = sys.argv[1]
+    
+    # Parse program arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-u', '--user', help='spotify user id')
+    parser.add_argument('-l', '--list', action='store_true', help='list all duplicates')
+    args = parser.parse_args()
+    if args.user:
+        user = args.user
     else:
         print("Whoops, need your user id!")
-        print("usage: python duplicates.py <user>")
+        print(parser.print_help())
         sys.exit()
 
     # Authorization scope:
@@ -51,6 +58,7 @@ if __name__ == '__main__':
         music = {}
         print("\nYour playlists:\n")
 
+        # Get spotify data for user
         for playlist in playlists['items']:
             
             if playlist['owner']['id'] == user:
@@ -75,53 +83,64 @@ if __name__ == '__main__':
                     n = n + 1
 
         names = [x for x in names if x is not None]
-
-        # Start the process of removing duplicates based on user input
+        
         print("\nYour duplicates:")
-        for name, dup in sorted(list_duplicates(names)):
-            print(f"\n--- song: {name} ---")
-            print(f"{'#':5s}{'playlist':40s}{'album':40s}{'artists':40s}position")
-            options = "Stop: q, Skip: 0, Remove from:"
-            for i, n in enumerate(dup):
-                print(f"{str(i+1):5s}{music[n]['playlist']:40s}{music[n]['album']:40s}{music[n]['artists']:40s}{music[n]['position']}")
-                options += f" {i+1} - {music[n]['playlist']},"
-            choice = input(f"\n{options.strip(',')}\n")
-            to_be_removed = []
-            try:
-                choice = int(choice)
-                if choice == 0: 
-                    print("Skip!")
-                    continue
-                else:
-                    if choice in range(1, len(dup) + 1):
-                        to_be_removed = [{'playlist_id': music[dup[choice-1]]['playlist_id'], 
-                                         'tracks': [{'uri': music[dup[choice-1]]['uri'], 'positions': [music[dup[choice-1]]['position']]}]}]
-                    if not to_be_removed:
-                        print("No matching digit, jumping to next song ...")
-                        continue
-                    print(to_be_removed)
-            except ValueError:
-                choices = choice.split()
+        
+        if args.list:
+            # List duplicates
+            print(f"\n{'Song':40s}{'playlist':40s}{'album':40s}{'artists':40s}position")
+            for name, dup in sorted(list_duplicates(names)):               
+                for n in dup:
+                    print(f"{name:40s}{music[n]['playlist']:40s}{music[n]['album']:40s}{music[n]['artists']:40s}{music[n]['position']}")
+        else:
+            # List songs and take user input which to remove
+            for name, dup in sorted(list_duplicates(names)):
+                print(f"\n--- song: {name} ---")
+                print(f"{'#':5s}{'playlist':40s}{'album':40s}{'artists':40s}position")
+                options = "Stop: q, Skip: 0, Remove from:"
+                for i, n in enumerate(dup):
+                    print(f"{str(i+1):5s}{music[n]['playlist']:40s}{music[n]['album']:40s}{music[n]['artists']:40s}{music[n]['position']}")
+                    options += f" {i+1} - {music[n]['playlist']},"
+                choice = input(f"\n{options.strip(',')}\n")
+                
+                # Create track object to be removed
+                to_be_removed = []
                 try:
-                    choices = [int(choice) for choice in choices]
-                    for choice in choices:
+                    choice = int(choice)
+                    if choice == 0: 
+                        print("Skip!")
+                        continue
+                    else:
                         if choice in range(1, len(dup) + 1):
-                            to_be_removed.append({'playlist_id': music[dup[choice-1]]['playlist_id'], 
-                                                  'tracks': [{'uri': music[dup[choice-1]]['uri'], 'positions': [music[dup[choice-1]]['position']]}]})
-                    if not to_be_removed:
-                        print("No matching digits, jumping to next song ...")
-                        continue
+                            to_be_removed = [{'playlist_id': music[dup[choice-1]]['playlist_id'], 
+                                              'tracks': [{'uri': music[dup[choice-1]]['uri'], 'positions': [music[dup[choice-1]]['position']]}]}]
+                        if not to_be_removed:
+                            print("No matching digit, jumping to next song ...")
+                            continue
+                        print(to_be_removed)
                 except ValueError:
-                    if 'q' in choice:
-                        print('Stopping ...')
-                        break
-                    print("Input is not an integer or multiple space separated integers, jumping to next song ...")
-                    continue
-            
-            for track in to_be_removed:
-                try:
-                    sp.user_playlist_remove_specific_occurrences_of_tracks(user, track['playlist_id'], track['tracks'])
-                except:
-                    print('Error removing, jumping to next song ...')
+                    choices = choice.split()
+                    try:
+                        choices = [int(choice) for choice in choices]
+                        for choice in choices:
+                            if choice in range(1, len(dup) + 1):
+                                to_be_removed.append({'playlist_id': music[dup[choice-1]]['playlist_id'], 
+                                                      'tracks': [{'uri': music[dup[choice-1]]['uri'], 'positions': [music[dup[choice-1]]['position']]}]})
+                        if not to_be_removed:
+                            print("No matching digits, jumping to next song ...")
+                            continue
+                    except ValueError:
+                        if 'q' in choice:
+                            print('Stopping ...')
+                            break
+                        print("Input is not an integer or multiple space separated integers, jumping to next song ...")
+                        continue
+                
+                # Perform the actual removal
+                for track in to_be_removed:
+                    try:
+                        sp.user_playlist_remove_specific_occurrences_of_tracks(user, track['playlist_id'], track['tracks'])
+                    except:
+                        print('Error removing, jumping to next song ...')
     else:
-        print("Can't get token for", username)
+        print("Can't get token for", user)
