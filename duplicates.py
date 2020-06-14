@@ -135,7 +135,16 @@ if __name__ == '__main__':
                     try:
                         sp.user_playlist_remove_specific_occurrences_of_tracks(user, track['playlist_id'], track['tracks'])
                         print("Removed!")
+
+                        # Update positions
+                        for key in music:
+                            if music[key]['playlist_id'] == track['playlist_id']:
+                                if music[key]['position'] > track['tracks'][0]['positions'][0]:
+                                    music[key]['position'] -= 1
                     except:
                         print('Error removing, jumping to next song ...')
+
+            print("\nThat's all.")
+
     else:
         print("Can't get token for", user)
