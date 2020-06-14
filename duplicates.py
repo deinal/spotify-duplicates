@@ -95,7 +95,7 @@ if __name__ == '__main__':
         else:
             # List songs and take user input which to remove
             for name, dup in sorted(list_duplicates(names)):
-                print(f"\n--- song: {name} ---")
+                print(f"\n--- song: {name} ---\n")
                 print(f"{'#':5s}{'playlist':40s}{'album':40s}{'artists':40s}position")
                 options = "Stop: q, Skip: 0, Remove from:"
                 for i, n in enumerate(dup):
