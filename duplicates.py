@@ -117,7 +117,6 @@ if __name__ == '__main__':
                         if not to_be_removed:
                             print("No matching digit, jumping to next song ...")
                             continue
-                        print(to_be_removed)
                 except ValueError:
                     choices = choice.split()
                     try:
@@ -140,6 +139,7 @@ if __name__ == '__main__':
                 for track in to_be_removed:
                     try:
                         sp.user_playlist_remove_specific_occurrences_of_tracks(user, track['playlist_id'], track['tracks'])
+                        print("Removed!")
                     except:
                         print('Error removing, jumping to next song ...')
     else:
