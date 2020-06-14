@@ -7,11 +7,6 @@ from collections import defaultdict
 from dotenv import load_dotenv
 load_dotenv()
 
-def show_tracks(tracks):
-    for i, item in enumerate(tracks['items']):
-        track = item['track']
-        print("   %d %32.32s %s" % (i, track['artists'][0]['name'],
-            track['name']))
 
 def list_duplicates(seq):
     tally = defaultdict(list)
@@ -29,7 +24,7 @@ if __name__ == '__main__':
     
     # Parse program arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-u', '--user', help='spotify user id')
+    parser.add_argument('-u', '--user', required=True, help='spotify user id')
     parser.add_argument('-l', '--list', action='store_true', help='list all duplicates')
     args = parser.parse_args()
     if args.user:
