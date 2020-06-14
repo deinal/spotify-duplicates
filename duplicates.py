@@ -52,13 +52,13 @@ if __name__ == '__main__':
         names = []
         music = {}
         print("\nYour playlists:\n")
-
+        print(f"{'name':35s}{'total tracks'}")
         # Get spotify data for user
         for playlist in playlists['items']:
             
             if playlist['owner']['id'] == user:
                 
-                print(playlist['name'], 'Total tracks:', playlist['tracks']['total'])
+                print(f"{playlist['name']:35s}{playlist['tracks']['total']}")
 
                 playlist_id = playlist['id']
                 results = sp.playlist(playlist_id, fields="tracks,next")
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         
         if args.list:
             # List duplicates
-            print(f"\n{'Song':35s}{'playlist':35s}{'album':35s}{'artists':35s}position")
+            print(f"\n{'song':35s}{'playlist':35s}{'album':35s}{'artists':35s}position")
             for name, dup in sorted(list_duplicates(names)):               
                 for n in dup:
                     print(f"{name[:33]:35s}{music[n]['playlist'][:33]:35s}{music[n]['album'][:33]:35s}{music[n]['artists'][:33]:35s}{music[n]['position']}")
