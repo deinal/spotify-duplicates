@@ -1,6 +1,6 @@
 # spotify-duplicates
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Dope](https://img.shields.io/badge/Dope-yes-green.svg)](https://shields.io)
+[![Dope](https://img.shields.io/badge/Dope-very-green.svg)](https://shields.io)
 
 Resolve duplicate Spotify songs through your terminal :headphones:
 
