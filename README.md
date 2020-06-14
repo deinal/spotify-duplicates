@@ -1,4 +1,6 @@
 # spotify-duplicates
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Dope](https://img.shields.io/badge/Dope-yes-green.svg)](https://shields.io)
 
 Resolve duplicate Spotify songs through your terminal :headphones:
 
@@ -24,7 +26,7 @@ pip install -r requirements.txt
 - Create an app on the dashboard, remember to set a callback url, e.g. `http://localhost:8888/callback`
 - Copy `Client ID` and `Client Secret` to a `.env` file in the root of the project.
 
-Example `.env`:
+Example `.env` file
 ```
 SPOTIFY_ID='Client ID'
 SPOTIFY_SECRET='Client Secret'
